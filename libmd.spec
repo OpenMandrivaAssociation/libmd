@@ -1,20 +1,27 @@
 %define major 0
 %define libname %mklibname md %{major}
 %define devname %mklibname -d md
+
 %ifarch %{x86_64}
 %bcond_without compat32
 %else
 %bcond_with compat32
 %endif
+
 %if %{with compat32}
 %define lib32name libmd%{major}
 %define dev32name libmd-devel
 %endif
 
+%global optflags %{optflags} -O3
+
+# (tpg) enable PGO build
+%bcond_without pgo
+
 Summary:	Message digest functions from BSD systems
 Name:		libmd
 Version:	1.0.4
-Release:	1
+Release:	2
 License:	BSD-2-Clause OR BSD-3-Clause OR ISC OR SUSE-Public-Domain
 Group:		System/Libraries
 Url:		https://www.hadrons.org/software/libmd/
@@ -70,6 +77,7 @@ Development files for the %{name} library (32-bit).
 %prep
 %autosetup -p1
 
+%build
 export CONFIGURE_TOP=$(pwd)
 %if %{with compat32}
 mkdir build32
@@ -80,9 +88,33 @@ cd ..
 
 mkdir build
 cd build
+%if %{with pgo}
+export LD_LIBRARY_PATH="$(pwd)"
+
+CFLAGS="%{optflags} -fprofile-generate" \
+CXXFLAGS="%{optflags} -fprofile-generate" \
+FFLAGS="$CFLAGS" \
+FCFLAGS="$CFLAGS" \
+LDFLAGS="%{build_ldflags} -fprofile-generate" \
+%configure
+%make_build
+
+make check
+
+unset LD_LIBRARY_PATH
+llvm-profdata merge --output=%{name}-llvm.profdata *.profraw
+PROFDATA="$(realpath %{name}-llvm.profdata)"
+rm -f *.profraw
+make clean
+
+CFLAGS="%{optflags} -fprofile-use=$PROFDATA" \
+CXXFLAGS="%{optflags} -fprofile-use=$PROFDATA" \
+LDFLAGS="%{build_ldflags} -fprofile-use=$PROFDATA" \
+%endif
 %configure
 
-%build
+cd ..
+
 %if %{with compat32}
 %make_build -C build32
 %endif
