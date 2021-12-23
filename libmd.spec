@@ -21,7 +21,7 @@
 Summary:	Message digest functions from BSD systems
 Name:		libmd
 Version:	1.0.4
-Release:	2
+Release:	3
 License:	BSD-2-Clause OR BSD-3-Clause OR ISC OR SUSE-Public-Domain
 Group:		System/Libraries
 Url:		https://www.hadrons.org/software/libmd/
@@ -93,8 +93,6 @@ export LD_LIBRARY_PATH="$(pwd)"
 
 CFLAGS="%{optflags} -fprofile-generate" \
 CXXFLAGS="%{optflags} -fprofile-generate" \
-FFLAGS="$CFLAGS" \
-FCFLAGS="$CFLAGS" \
 LDFLAGS="%{build_ldflags} -fprofile-generate" \
 %configure
 %make_build
@@ -102,7 +100,7 @@ LDFLAGS="%{build_ldflags} -fprofile-generate" \
 make check
 
 unset LD_LIBRARY_PATH
-llvm-profdata merge --output=%{name}-llvm.profdata *.profraw
+llvm-profdata merge --output=%{name}-llvm.profdata $(find . -name "*.profraw" -type f)
 PROFDATA="$(realpath %{name}-llvm.profdata)"
 rm -f *.profraw
 make clean
