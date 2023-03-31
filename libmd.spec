@@ -21,7 +21,7 @@
 Summary:	Message digest functions from BSD systems
 Name:		libmd
 Version:	1.0.4
-Release:	3
+Release:	4
 License:	BSD-2-Clause OR BSD-3-Clause OR ISC OR SUSE-Public-Domain
 Group:		System/Libraries
 Url:		https://www.hadrons.org/software/libmd/
