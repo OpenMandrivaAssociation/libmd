@@ -1,5 +1,6 @@
 %define major 0
-%define libname %mklibname md %{major}
+%define oldlibname %mklibname md 0
+%define libname %mklibname md
 %define devname %mklibname -d md
 
 %ifarch %{x86_64}
@@ -15,13 +16,17 @@
 
 %global optflags %{optflags} -O3
 
+%if %{cross_compiling}
+%bcond_with pgo
+%else
 # (tpg) enable PGO build
 %bcond_without pgo
+%endif
 
 Summary:	Message digest functions from BSD systems
 Name:		libmd
-Version:	1.0.4
-Release:	4
+Version:	1.1.0
+Release:	1
 License:	BSD-2-Clause OR BSD-3-Clause OR ISC OR SUSE-Public-Domain
 Group:		System/Libraries
 Url:		https://www.hadrons.org/software/libmd/
@@ -35,6 +40,7 @@ API.
 %package -n %{libname}
 Summary:	Provides message digest functions from BSD systems
 Group:		System/Libraries
+%rename %{oldlibname}
 
 %description -n %{libname}
 The libmd library provides a few message digest ("hash") functions, as
@@ -134,6 +140,7 @@ cd ..
 %{_libdir}/%{name}.so
 %{_libdir}/pkgconfig/%{name}.pc
 %doc %{_mandir}/man3/*.3*
+%{_mandir}/man7/*.7*
 
 %if %{with compat32}
 %files -n %{lib32name}
