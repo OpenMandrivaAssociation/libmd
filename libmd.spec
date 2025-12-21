@@ -63,6 +63,11 @@ Development files for the %{name} library.
 Summary:	Provides message digest functions from BSD systems (32-bit)
 Group:		System/Libraries
 Requires:	libc6
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	libc6
 
 %description -n %{lib32name}
