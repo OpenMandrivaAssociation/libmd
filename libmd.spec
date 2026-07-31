@@ -25,7 +25,7 @@
 
 Summary:	Message digest functions from BSD systems
 Name:		libmd
-Version:	1.1.0
+Version:	1.2.0
 Release:	1
 License:	BSD-2-Clause OR BSD-3-Clause OR ISC OR SUSE-Public-Domain
 Group:		System/Libraries
